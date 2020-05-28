@@ -11,7 +11,7 @@ on: [push, pull_request]
 jobs:
   job_1:
     runs-on: ${{ matrix.os }}
-    name: Build
+    name: Test
     timeout-minutes: 10
     strategy:
       matrix:
@@ -57,7 +57,7 @@ jobs:
         sudo rm -r AixLib-0.9.1  # remove git folder
         cd /home/runner/work/modelicatest/modelicatest  # cd back to repo folder
 
-    - name: Install OMPython and PyFMI
+    - name: Install OMPython
       run: |
         # Install OMPython
         python -m pip install -U https://github.com/OpenModelica/OMPython/archive/master.zip
@@ -66,9 +66,10 @@ jobs:
 #      if: runner.os == 'Windows'
 #      run: python ./HP_testbench/conda.recipe/run_test.py
 
-    - name: Run the main method of hptestbench (a simulation with OpenModelica)
-      if: runner.os == 'Linux'
-      run: python ./hp_debugging.py
+    - name: Run the first test for CHP
+      run: python ./hp_debugging_CHP.py
+    - name: Run the first test for heatpump
+      run: python ./hp_debugging_heatpump.py
 
     - name: Lint with flake8
       if: runner.os == 'Linux'  # Only needs to run once
