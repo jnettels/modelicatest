@@ -54,7 +54,7 @@ jobs:
         wget -q https://github.com/RWTH-EBC/AixLib/archive/v0.9.1.tar.gz -O - | sudo tar xzf -
         sudo mv AixLib-0.9.1/AixLib/ 'AixLib 0.9.1'  # extract library from git folder
         sudo rm -r AixLib-0.9.1  # remove git folder
-        cd /home/runner/work/modeliquarree/modeliquarree  # cd back to repo folder
+        cd /home/runner/work/modelicatest/modelicatest  # cd back to repo folder
 
     - name: Install OMPython and PyFMI
       run: |
