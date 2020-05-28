@@ -1,10 +1,10 @@
-# GitHub actions designed for the heatpump testbench project
+# GitHub actions designed for the tests with modelica.
 # We basically walk two paths here, depending on runner.os (Windows / Linux):
 # 1. On Linux, it is easy to automatically install OpenModelica,
 #    so we can test the complete process and run a Modelica model
 # 2. On Windows, instead we run the simulation with the stored FMU
 
-name: HP Testbench
+name: Modelica Tests
 
 on: [push, pull_request]
 
@@ -12,6 +12,7 @@ jobs:
   job_1:
     runs-on: ${{ matrix.os }}
     name: Build
+    timeout-minutes: 10
     strategy:
       matrix:
         # os: [windows-latest, ubuntu-latest]
@@ -60,9 +61,6 @@ jobs:
       run: |
         # Install OMPython
         python -m pip install -U https://github.com/OpenModelica/OMPython/archive/master.zip
-
-        # For python FMI interaction, install pyfmi
-        conda install -c conda-forge pyfmi assimulo -y
 
 #    - name: Run the unittest for hptestbench
 #      if: runner.os == 'Windows'
