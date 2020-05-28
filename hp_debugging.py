@@ -10,14 +10,21 @@ python -m pip install -U https://github.com/OpenModelica/OMPython/archive/master
 
 import os
 import sys
+import pprint
 from OMPython import OMCSessionZMQ
 
-
-def run_OpenModelica_CLI():
-    """Run simulations with calls to the OpenModelica command line."""
+def main():
     # Run argument parser
     args = run_ArgParser()
+    model = args.model
 
+    if model == 'all':
+        run_series()
+    else:
+        run_OpenModelica_CLI(model)
+
+def run_OpenModelica_CLI(model=None):
+    """Run simulations with calls to the OpenModelica command line."""
     # Create a subdirectory for the simulation
     sim_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)),
                            'sim_'+sys.platform  # separate windows and linux
@@ -30,29 +37,47 @@ def run_OpenModelica_CLI():
     base_path = omc.sendExpression('getInstallationDirectoryPath()')
     file = os.path.join(base_path, r'lib/omlibrary/AixLib 0.9.1/package.mo')
 
-    if args.model == 'CHP':
-        cmds = [
-            'loadFile("{}")'.format(file),
-            'cd("{}")'.format(sim_dir),
-            # CHP example
-            'checkModel(AixLib.FastHVAC.Examples.HeatGenerators.CHP.CHP)',
-            'simulate(AixLib.FastHVAC.Examples.HeatGenerators.CHP.CHP)',
-            'plot(temperatureSensor_after.T)',
-          ]
-    elif args.model == 'heatpump':
-        cmds = [
-            'loadFile("{}")'.format(file),
-            'cd("{}")'.format(sim_dir),
-            # heatpump example
-            'checkModel(AixLib.FastHVAC.Examples.HeatGenerators.HeatPump.HeatPump)',
-            'simulate(AixLib.FastHVAC.Examples.HeatGenerators.HeatPump.HeatPump)',
-            'plot(innerCycle.QCon)',
-          ]
+    model = "AixLib.FastHVAC.Examples.{}".format(model)
+    cmds = [
+        'loadFile("{}")'.format(file),
+        'cd("{}")'.format(sim_dir),
+        'checkModel({})'.format(model),
+        'simulate({})'.format(model),
+        # 'plot(temperatureSensor_after.T)',
+        # 'plot(innerCycle.QCon)',
+      ]
 
     for cmd in cmds:
-        print('\n{}:'.format(cmd))
+        print(cmd)
         answer = omc.sendExpression(cmd)
-        print('{}\n'.format(answer))
+        print(pprint.pprint(answer))
+        print()
+
+
+def run_series():
+    """Run a series of models."""
+    models = [
+        # 'Chiller.Chiller',  # gets stuck, does not finish
+        'HeatExchangers.DHWHeatExchanger',
+        'HeatExchangers.MultiRadiator',
+        'HeatExchangers.RadiatorMultiLayer',
+        'HeatGenerators.Boiler.Boiler',
+        'HeatGenerators.CHP.CHP',
+        # 'HeatGenerators.HeatPump.HeatPump',  # gets stuck, does not finish
+        'Examples.Pipes.Pipes',
+        'Pumps.FluidSource',
+        'Pumps.Pump',
+        'Sensors.SensorVerification',
+        'Sinks.SinkSourceVesselTest',
+        'Storage.BufferStorageVariablePorts',
+        'Valves.ThermostaticValve',
+        'Valves.ThermostaticValveRadiator',
+        'Valves.ThreeWayValve',
+        ]
+    for model in models:
+        run_OpenModelica_CLI(model)
+
+    print('All models simulated.')
 
 
 def run_ArgParser():
@@ -64,11 +89,11 @@ def run_ArgParser():
                                      formatter_class=argparse.
                                      ArgumentDefaultsHelpFormatter)
 
-    parser.add_argument('-m', '--model', dest='model', help='Model to use ('
-                        '"CHP" or "heatpump").', type=str, default='CHP')
+    parser.add_argument('-m', '--model', dest='model', help='name of model.',
+                        type=str, default='HeatGenerators.CHP.CHP')
 
     return parser.parse_args()
 
 
 if __name__ == '__main__':
-    run_OpenModelica_CLI()
+    main()
