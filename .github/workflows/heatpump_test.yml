@@ -1,11 +1,8 @@
 # GitHub actions designed for the tests with modelica.
-# We basically walk two paths here, depending on runner.os (Windows / Linux):
-# 1. On Linux, it is easy to automatically install OpenModelica,
-#    so we can test the complete process and run a Modelica model
-# 2. On Windows, instead we run the simulation with the stored FMU
+# On Linux, it is easy to automatically install OpenModelica,
+# so we only test on Linux.
 
 name: Modelica Tests
-
 on: [push, pull_request]
 
 jobs:
@@ -15,7 +12,6 @@ jobs:
     timeout-minutes: 10
     strategy:
       matrix:
-        # os: [windows-latest, ubuntu-latest]
         os: [ubuntu-latest]
         python-version: [3.7]
 
@@ -27,8 +23,7 @@ jobs:
       uses: s-weigand/setup-conda@v1.0.1
 
     - name: Install Python dependencies
-      run: |
-        conda install pandas matplotlib conda-build
+      run: conda install pandas matplotlib conda-build
 
     - name: Install OpenModelica
       if: runner.os == 'Linux'  # This only works on Linux
@@ -58,18 +53,12 @@ jobs:
         cd /home/runner/work/modelicatest/modelicatest  # cd back to repo folder
 
     - name: Install OMPython
-      run: |
-        # Install OMPython
-        python -m pip install -U https://github.com/OpenModelica/OMPython/archive/master.zip
-
-#    - name: Run the unittest for hptestbench
-#      if: runner.os == 'Windows'
-#      run: python ./HP_testbench/conda.recipe/run_test.py
+      run: python -m pip install -U https://github.com/OpenModelica/OMPython/archive/master.zip
 
     - name: Run the first test for CHP
-      run: python ./hp_debugging_CHP.py
-    - name: Run the first test for heatpump
-      run: python ./hp_debugging_heatpump.py
+      run: python ./hp_debugging.py -m CHP
+    - name: Run the second test for heatpump
+      run: python ./hp_debugging.py -m heatpump
 
     - name: Lint with flake8
       if: runner.os == 'Linux'  # Only needs to run once
