@@ -22,8 +22,8 @@ jobs:
     - name: Setup conda with python ${{ matrix.python-version }}
       uses: s-weigand/setup-conda@v1.0.1
 
-    - name: Install Python dependencies
-      run: conda install pandas matplotlib conda-build
+    # - name: Install Python dependencies
+    #   run: conda install pandas matplotlib conda-build
 
     - name: Install OpenModelica
       if: runner.os == 'Linux'  # This only works on Linux
@@ -47,17 +47,18 @@ jobs:
       if: runner.os == 'Linux'  # Only required on Linux
       run: |
         cd /usr/lib/omlibrary/  # cd to OpenModelica library
-        wget -q https://github.com/RWTH-EBC/AixLib/archive/v0.9.1.tar.gz -O - | sudo tar xzf -
-        sudo mv AixLib-0.9.1/AixLib/ 'AixLib 0.9.1'  # extract library from git folder
+        # wget -q https://github.com/RWTH-EBC/AixLib/archive/v0.9.1.tar.gz -O - | sudo tar xzf -
+        wget -q https://github.com/RWTH-EBC/AixLib/archive/v0.9.0.tar.gz -O - | sudo tar xzf -
+        sudo mv AixLib-0.9.0/AixLib/ 'AixLib 0.9.1'  # extract library from git folder
         sudo rm -r AixLib-0.9.1  # remove git folder
         cd /home/runner/work/modelicatest/modelicatest  # cd back to repo folder
 
     - name: Install OMPython
-      # run: python -m pip install -U https://github.com/OpenModelica/OMPython/archive/master.zip
-      run: python -m pip install -U https://github.com/OpenModelica/OMPython/archive/v3.0.3.zip
+      run: python -m pip install -U https://github.com/OpenModelica/OMPython/archive/master.zip
 
     - name: Run the first test for CHP
       run: python ./hp_debugging.py -m HeatGenerators.CHP.CHP
+
     - name: Run the second test for heatpump
       run: python ./hp_debugging.py -m HeatGenerators.HeatPump.HeatPump
 

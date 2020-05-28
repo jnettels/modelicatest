@@ -13,6 +13,7 @@ import sys
 import pprint
 from OMPython import OMCSessionZMQ
 
+
 def main():
     # Run argument parser
     args = run_ArgParser()
@@ -22,6 +23,7 @@ def main():
         run_series()
     else:
         run_OpenModelica_CLI(model)
+
 
 def run_OpenModelica_CLI(model=None):
     """Run simulations with calls to the OpenModelica command line."""
