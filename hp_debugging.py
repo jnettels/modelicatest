@@ -35,9 +35,9 @@ def run_OpenModelica_CLI():
         'simulate(AixLib.FastHVAC.Examples.HeatGenerators.CHP.CHP)',
         'plot(temperatureSensor_after.T)',
         # heatpump example
-        # 'checkModel(AixLib.FastHVAC.Examples.HeatGenerators.HeatPump.HeatPump)',
-        # 'simulate(AixLib.FastHVAC.Examples.HeatGenerators.HeatPump.HeatPump)',
-        # 'plot(innerCycle.QCon)',
+        'checkModel(AixLib.FastHVAC.Examples.HeatGenerators.HeatPump.HeatPump)',
+        'simulate(AixLib.FastHVAC.Examples.HeatGenerators.HeatPump.HeatPump)',
+        'plot(innerCycle.QCon)',
       ]
     for cmd in cmds:
         print('\n{}:'.format(cmd))
