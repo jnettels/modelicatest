@@ -15,7 +15,7 @@ from OMPython import OMCSessionZMQ
 
 
 def main():
-    # Run argument parser
+    """Run argument parser."""
     args = run_ArgParser()
     model = args.model
 
@@ -41,8 +41,11 @@ def run_OpenModelica_CLI(model=None):
 
     model = "AixLib.FastHVAC.Examples.{}".format(model)
     cmds = [
+        'setCommandLineOptions("-d=newInst")',
         'loadFile("{}")'.format(file),
         'cd("{}")'.format(sim_dir),
+        'isPackage({})'.format(model),
+        'isModel({})'.format(model),
         'checkModel({})'.format(model),
         'simulate({})'.format(model),
         # 'plot(temperatureSensor_after.T)',
@@ -52,20 +55,20 @@ def run_OpenModelica_CLI(model=None):
     for cmd in cmds:
         print(cmd)
         answer = omc.sendExpression(cmd)
-        print(pprint.pprint(answer))
+        pprint.pprint(answer)
         print()
 
 
 def run_series():
     """Run a series of models."""
     models = [
-        # 'Chiller.Chiller',  # gets stuck, does not finish
+        'Chiller.Chiller',  # needs "New Frontend"
         'HeatExchangers.DHWHeatExchanger',
         'HeatExchangers.MultiRadiator',
         'HeatExchangers.RadiatorMultiLayer',
         'HeatGenerators.Boiler.Boiler',
         'HeatGenerators.CHP.CHP',
-        # 'HeatGenerators.HeatPump.HeatPump',  # gets stuck, does not finish
+        'HeatGenerators.HeatPump.HeatPump',  # needs "New Frontend"
         'Examples.Pipes.Pipes',
         'Pumps.FluidSource',
         'Pumps.Pump',
@@ -99,3 +102,5 @@ def run_ArgParser():
 
 if __name__ == '__main__':
     main()
+    # run_OpenModelica_CLI('HeatGenerators.HeatPump.HeatPump')
+    # run_series()
